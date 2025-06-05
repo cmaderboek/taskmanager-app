@@ -99,6 +99,7 @@ if DONE_SECTION_ID in section_ids:
     section_ids.remove(DONE_SECTION_ID)
     section_ids.append(DONE_SECTION_ID)
 
+
 # UI: Sections und Tasks anzeigen
 for section_id in section_ids:
     section = st.session_state.sections[section_id]
@@ -168,6 +169,7 @@ for section_id in section_ids:
                 if st.button("🗑️ Löschen", key=f"delete_done_task_{section_id}_{i}"):
                     section["tasks"].pop(i)
                     st.rerun()
+
 
 st.markdown("---")
 

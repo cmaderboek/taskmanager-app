@@ -99,6 +99,8 @@ if DONE_SECTION_ID in section_ids:
     section_ids.remove(DONE_SECTION_ID)
     section_ids.append(DONE_SECTION_ID)
 
+
+# UI: Sections und Tasks anzeigen
 # UI: Sections und Tasks anzeigen
 for section_id in section_ids:
     section = st.session_state.sections[section_id]
@@ -106,68 +108,73 @@ for section_id in section_ids:
     if section_id == DONE_SECTION_ID:
         st.markdown("---")
 
-    # Titelzeile mit Lösch-Button
-    col1, col2 = st.columns([12, 1])
-    with col1:
-        st.markdown(f"### <span style='color:{COLOR_PALETTE[section['color']]};'>{section['name']}</span>", unsafe_allow_html=True)
-    with col2:
-        if section_id != DONE_SECTION_ID:
-            if st.button("🗑️", key=f"delete_section_{section_id}"):
-                st.session_state.delete_section_id = section_id
-                st.rerun()
+    expander_label = f"📂 {section['name']}"
+    color = COLOR_PALETTE[section["color"]]
 
-    # Neue Task anlegen
-    if section_id != DONE_SECTION_ID:
-        input_key = f"task_input_{section_id}"
-        due_key = f"task_due_{section_id}"
-        priority_key = f"task_priority_{section_id}"
-
-        with st.expander("➕ Neuer Task"):
-            content = st.text_input("Task-Beschreibung", key=input_key)
-            due_date = st.date_input("Fälligkeitsdatum", value=datetime.now().date(), key=due_key)
-            due_time = st.time_input("Fällige Uhrzeit", value=datetime.now().time(), key=f"time_{section_id}")
-            priority = st.selectbox("Priorität", options=[3, 2, 1], format_func=lambda x: PRIORITY_LABELS[x], key=priority_key)
-
-            if st.button("Speichern", key=f"save_{section_id}"):
-                if content.strip():
-                    task = {
-                        "content": content.strip(),
-                        "due": datetime.combine(due_date, due_time),
-                        "priority": priority,
-                        "assigned_to": [],
-                        "from_section": section_id
-                    }
-                    section["tasks"].append(task)
-                    st.rerun()
-                else:
-                    st.warning("Bitte gib eine Task-Beschreibung ein.")
-
-    # Tasks anzeigen
-    tasks_sorted = sorted(section["tasks"], key=lambda x: (x["due"], -x["priority"]))
-    for i, task in enumerate(tasks_sorted):
-        col1, col2, col3 = st.columns([16, 4, 4])
+    with st.expander(expander_label, expanded=False):
+        # Titelzeile mit Lösch-Button
+        col1, col2 = st.columns([12, 1])
         with col1:
-            days_left = (task["due"].date() - datetime.now().date()).days
-            due_str = task["due"].strftime("%d.%m.%Y %H:%M")
-            st.markdown(f"**{PRIORITY_LABELS[task['priority']]}**  \n{task['content']}  \n{due_str} ({days_left} Tage)")
+            st.markdown(f"### <span style='color:{color};'>{section['name']}</span>", unsafe_allow_html=True)
         with col2:
             if section_id != DONE_SECTION_ID:
-                if st.button("✔️ Erledigt", key=f"done_{section_id}_{i}"):
-                    task["done_color"] = section["color"]
-                    st.session_state.sections[DONE_SECTION_ID]["tasks"].append(task)
-                    section["tasks"].pop(i)
+                if st.button("🗑", key=f"delete_section_{section_id}"):
+                    st.session_state.delete_section_id = section_id
                     st.rerun()
-        with col3:
-            if section_id != DONE_SECTION_ID:
-                if st.button("🗑️ Löschen", key=f"delete_task_{section_id}_{i}"):
-                    section["tasks"].pop(i)
-                    st.rerun()
-            else:
-                color = COLOR_PALETTE.get(task.get("done_color", "Grau"), "#cccccc")
-                st.markdown(f"<div style='width:20px;height:20px;background-color:{color};border-radius:50%;'></div>", unsafe_allow_html=True)
-                if st.button("🗑️ Löschen", key=f"delete_done_task_{section_id}_{i}"):
-                    section["tasks"].pop(i)
-                    st.rerun()
+
+        # Neue Task anlegen
+        if section_id != DONE_SECTION_ID:
+            input_key = f"task_input_{section_id}"
+            due_key = f"task_due_{section_id}"
+            priority_key = f"task_priority_{section_id}"
+
+            with st.expander("➕ Neuer Task"):
+                content = st.text_input("Task-Beschreibung", key=input_key)
+                due_date = st.date_input("Fälligkeitsdatum", value=datetime.now().date(), key=due_key)
+                due_time = st.time_input("Fällige Uhrzeit", value=datetime.now().time(), key=f"time_{section_id}")
+                priority = st.selectbox("Priorität", options=[3, 2, 1], format_func=lambda x: PRIORITY_LABELS[x], key=priority_key)
+
+                if st.button("Speichern", key=f"save_{section_id}"):
+                    if content.strip():
+                        task = {
+                            "content": content.strip(),
+                            "due": datetime.combine(due_date, due_time),
+                            "priority": priority,
+                            "assigned_to": [],
+                            "from_section": section_id
+                        }
+                        section["tasks"].append(task)
+                        st.rerun()
+                    else:
+                        st.warning("Bitte gib eine Task-Beschreibung ein.")
+
+        # Tasks anzeigen
+        tasks_sorted = sorted(section["tasks"], key=lambda x: (x["due"], -x["priority"]))
+        for i, task in enumerate(tasks_sorted):
+            col1, col2, col3 = st.columns([16, 4, 4])
+            with col1:
+                days_left = (task["due"].date() - datetime.now().date()).days
+                due_str = task["due"].strftime("%d.%m.%Y %H:%M")
+                st.markdown(f"{PRIORITY_LABELS[task['priority']]}  \n{task['content']}  \n{due_str} ({days_left} Tage)")
+            with col2:
+                if section_id != DONE_SECTION_ID:
+                    if st.button("✔ Erledigt", key=f"done_{section_id}_{i}"):
+                        task["done_color"] = section["color"]
+                        st.session_state.sections[DONE_SECTION_ID]["tasks"].append(task)
+                        section["tasks"].pop(i)
+                        st.rerun()
+            with col3:
+                if section_id != DONE_SECTION_ID:
+                    if st.button("🗑 Löschen", key=f"delete_task_{section_id}_{i}"):
+                        section["tasks"].pop(i)
+                        st.rerun()
+                else:
+                    color = COLOR_PALETTE.get(task.get("done_color", "Grau"), "#cccccc")
+                    st.markdown(f"<div style='width:20px;height:20px;background-color:{color};border-radius:50%;'></div>", unsafe_allow_html=True)
+                    if st.button("🗑 Löschen", key=f"delete_done_task_{section_id}_{i}"):
+                        section["tasks"].pop(i)
+                        st.rerun()
+
 
 st.markdown("---")
 
