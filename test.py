@@ -1,135 +1,192 @@
 import streamlit as st
+from datetime import datetime, timedelta
 import uuid
-import json
-import os
-from datetime import datetime
 
-DATA_FILE = "data.json"
+# Farboptionen für Sections
+COLOR_PALETTE = { 
+    "Blau": "#00859c",
+    "Grün": "#00784f",
+    "Rot": "#fc4024",
+    "Orange": "#f8991d",
+    "Lila": "#8552a0",
+    "Gelb": "#f7ce15",
+    "Rosa": "#ef4782",
+    "Grau": "#aaaaaa"
+}
 
-# ---------- Hilfsfunktionen ----------
+# Prioritäten festlegen
+PRIORITY_LABELS = { 
+    3: "★★★",
+    2: "★★",
+    1: "★"
+}
 
-def load_data():
-    if os.path.exists(DATA_FILE):
-        with open(DATA_FILE, "r") as f:
-            return json.load(f)
-    return {}
-
-def save_data():
-    with open(DATA_FILE, "w") as f:
-        json.dump(st.session_state.sections, f, indent=2)
-
-# ---------- Initialisierung ----------
+# Initialisierung
 if "sections" not in st.session_state:
-    st.session_state.sections = load_data()
+    st.session_state.sections = {}
 
 if "add_section_mode" not in st.session_state:
     st.session_state.add_section_mode = False
 
-# Farben und Prioritäten
-color_options = {
-    "🔵 Blau": "#3498db",
-    "🟢 Grün": "#2ecc71",
-    "🟡 Gelb": "#f1c40f",
-    "🟣 Lila": "#9b59b6",
-    "🔴 Rot": "#e74c3c"
-}
-priority_icons = {
-    "Hoch (!!!)": "!!!",
-    "Mittel (!!)": "!!",
-    "Niedrig (!)": "!"
-}
+if "new_task_inputs" not in st.session_state:
+    st.session_state.new_task_inputs = {}
 
-# ---------- UI ----------
-st.title("🗂 Task Manager")
+if "delete_section_id" not in st.session_state:
+    st.session_state.delete_section_id = None
 
-# Section hinzufügen
-if not st.session_state.add_section_mode:
-    if st.button("➕ Neue Section"):
-        st.session_state.add_section_mode = True
-        # st.experimental_rerun()
-
-if st.session_state.add_section_mode:
-    with st.form("add_section", clear_on_submit=True):
-        name = st.text_input("Section-Name")
-        color_choice = st.selectbox("Farbe", list(color_options.keys()))
-        submit = st.form_submit_button("✅ Fertig")
-    if submit and name:
-        new_id = str(uuid.uuid4())
-        st.session_state.sections[new_id] = {
-            "name": name,
-            "color": color_options[color_choice],
-            "tasks": [],
-            "id": new_id
-        }
-        st.session_state.add_section_mode = False
-        save_data()
-        # st.experimental_rerun()
-
-# Erledigte Tasks Section sicherstellen
-DONE_ID = "done"
-if DONE_ID not in st.session_state.sections:
-    st.session_state.sections[DONE_ID] = {
-        "name": "✅ Erledigte Tasks",
-        "color": "#bdc3c7",
+# Stelle sicher, dass die "Erledigte Tasks"-Section existiert
+DONE_SECTION_ID = "done_tasks"
+if DONE_SECTION_ID not in st.session_state.sections:
+    st.session_state.sections[DONE_SECTION_ID] = {
+        "name": "Erledigte Tasks",
+        "color": "Grau",
         "tasks": [],
-        "id": DONE_ID
+        "shared_with": [],
+        "id": DONE_SECTION_ID
     }
 
-# Sections anzeigen
-for sec_id, sec in st.session_state.sections.items():
-    with st.expander(f"{sec['name']} ({len(sec['tasks'])})", expanded=True):
-        sorted_tasks = sorted(
-            sec["tasks"],
-            key=lambda t: (t.get("due_date") or "", t.get("priority", 2))
-        )
-        for idx, task in enumerate(sorted_tasks):
-            due_str = ""
-            if task.get("due_date"):
-                due = datetime.strptime(task["due_date"], "%Y-%m-%dT%H:%M")
-                days_left = (due - datetime.now()).days
-                due_str = f"🗓 {due.strftime('%d.%m.%Y %H:%M')} ({days_left} Tage)"
+# Titel
+st.markdown("""
+<div style='text-align: center; font-size: 80px; font-family: "Source Sans Pro", sans-serif; font-weight: 800;'>
+    TaskBuddy
+</div>
+""", unsafe_allow_html=True)
+st.markdown("<div style='height: 50px;'></div>", unsafe_allow_html=True)
 
-            prio = priority_icons.get(task.get("priority_label", ""), "")
-            color = task.get("original_color", sec["color"])
+# UI: Neue Section anlegen
+if not st.session_state.add_section_mode:
+    col1, col2, col3 = st.columns([3, 3, 3])
+    with col2:
+        if st.button("➕ Neue Section anlegen"):
+            st.session_state.add_section_mode = True
+            st.rerun()
+else:
+    st.markdown("""
+    <div style='font-size: 1.75rem; font-family: "Source Sans Pro", sans-serif; font-weight: 600; margin-bottom: 1.25rem;'>
+        Neue Section
+    </div>
+    """, unsafe_allow_html=True)
+    section_name = st.text_input("Name der neuen Section")
+    section_color = st.selectbox("Farbe der neuen Section wählen", list(COLOR_PALETTE.keys())[:-1])  # Grau ausgeschlossen
 
-            st.markdown(
-                f"<div style='border-left: 5px solid {color}; padding: 8px; margin-bottom: 5px;'>"
-                f"<b>{prio}</b> {task['content']}<br><small>{due_str}</small></div>",
-                unsafe_allow_html=True
-            )
+    col1, col2 = st.columns([13, 3])  
+    with col1:
+        if st.button("✔️ Fertig"):
+            if section_name.strip():
+                section_id = str(uuid.uuid4())
+                st.session_state.sections[section_id] = {
+                    "name": section_name.strip(),
+                    "color": section_color,
+                    "tasks": [],
+                    "shared_with": [],
+                    "id": section_id
+                }
+                st.session_state.new_task_inputs[section_id] = {}
+                st.session_state.add_section_mode = False
+                st.rerun()
+            else:
+                st.warning("Bitte gib einen Namen ein.")
+    with col2:
+        if st.button("✖️ Abbrechen"):
+            st.session_state.add_section_mode = False
+            st.rerun()
 
-            if sec_id != DONE_ID:
-                if st.button("✅ Erledigt", key=f"{sec_id}_{idx}"):
-                    task["original_color"] = sec["color"]
-                    st.session_state.sections[DONE_ID]["tasks"].append(task)
-                    st.session_state.sections[sec_id]["tasks"].remove(task)
-                    save_data()
-                    # st.experimental_rerun()
+st.markdown("---")
 
-        if sec_id != DONE_ID:
-            with st.form(f"task_form_{sec_id}", clear_on_submit=True):
-                content = st.text_input("Task", key=f"content_{sec_id}")
-                due_date = st.date_input("Fällig am", key=f"due_date_{sec_id}")
-                due_time = st.time_input("Uhrzeit", key=f"due_time_{sec_id}")
-                prio_label = st.selectbox("Priorität", list(priority_icons.keys()), key=f"prio_{sec_id}")
-                submit_task = st.form_submit_button("➕ Task speichern")
-            if submit_task and content:
-                due_combined = datetime.combine(due_date, due_time)
-                st.session_state.sections[sec_id]["tasks"].append({
-                    "content": content,
-                    "due_date": due_combined.isoformat(),
-                    "priority": list(priority_icons).index(prio_label),
-                    "priority_label": prio_label
-                })
-                save_data()
+# Stelle sicher, dass "Erledigte Tasks" zuletzt kommt
+section_ids = list(st.session_state.sections.keys())
+if DONE_SECTION_ID in section_ids:
+    section_ids.remove(DONE_SECTION_ID)
+    section_ids.append(DONE_SECTION_ID)
 
+
+# UI: Sections und Tasks anzeigen
+# UI: Sections und Tasks anzeigen
+for section_id in section_ids:
+    section = st.session_state.sections[section_id]
+    
+    if section_id == DONE_SECTION_ID:
+        st.markdown("---")
+
+    expander_label = f"📂 {section['name']}"
+    color = COLOR_PALETTE[section["color"]]
+
+    with st.expander(expander_label, expanded=False):
+        # Titelzeile mit Lösch-Button
+        col1, col2 = st.columns([12, 1])
+        with col1:
+            st.markdown(f"### <span style='color:{color};'>{section['name']}</span>", unsafe_allow_html=True)
+        with col2:
+            if section_id != DONE_SECTION_ID:
+                if st.button("🗑", key=f"delete_section_{section_id}"):
+                    st.session_state.delete_section_id = section_id
+                    st.rerun()
+
+        # Neue Task anlegen
+        if section_id != DONE_SECTION_ID:
+            input_key = f"task_input_{section_id}"
+            due_key = f"task_due_{section_id}"
+            priority_key = f"task_priority_{section_id}"
+
+            content = st.text_input("Task-Beschreibung", key=input_key)
+            due_date = st.date_input("Fälligkeitsdatum", value=datetime.now().date(), key=due_key)
+            due_time = st.time_input("Fällige Uhrzeit", value=datetime.now().time(), key=f"time_{section_id}")
+            priority = st.selectbox("Priorität", options=[3, 2, 1], format_func=lambda x: PRIORITY_LABELS[x], key=priority_key)
+
+            if st.button("Speichern", key=f"save_{section_id}"):
+                if content.strip():
+                    task = {
+                       "content": content.strip(),
+                       "due": datetime.combine(due_date, due_time),
+                       "priority": priority,
+                       "assigned_to": [],
+                       "from_section": section_id
+                    }
+                    section["tasks"].append(task)
+                    st.rerun()
+                else:
+                    st.warning("Bitte gib eine Task-Beschreibung ein.")
+
+        # Tasks anzeigen
+        tasks_sorted = sorted(section["tasks"], key=lambda x: (x["due"], -x["priority"]))
+        for i, task in enumerate(tasks_sorted):
+            col1, col2, col3 = st.columns([16, 4, 4])
+            with col1:
+                days_left = (task["due"].date() - datetime.now().date()).days
+                due_str = task["due"].strftime("%d.%m.%Y %H:%M")
+                st.markdown(f"{PRIORITY_LABELS[task['priority']]}  \n{task['content']}  \n{due_str} ({days_left} Tage)")
+            with col2:
+                if section_id != DONE_SECTION_ID:
+                    if st.button("✔ Erledigt", key=f"done_{section_id}_{i}"):
+                        task["done_color"] = section["color"]
+                        st.session_state.sections[DONE_SECTION_ID]["tasks"].append(task)
+                        section["tasks"].pop(i)
+                        st.rerun()
+            with col3:
+                if section_id != DONE_SECTION_ID:
+                    if st.button("🗑 Löschen", key=f"delete_task_{section_id}_{i}"):
+                        section["tasks"].pop(i)
+                        st.rerun()
+                else:
+                    color = COLOR_PALETTE.get(task.get("done_color", "Grau"), "#cccccc")
+                    st.markdown(f"<div style='width:20px;height:20px;background-color:{color};border-radius:50%;'></div>", unsafe_allow_html=True)
+                    if st.button("🗑 Löschen", key=f"delete_done_task_{section_id}_{i}"):
+                        section["tasks"].pop(i)
+                        st.rerun()
+
+
+st.markdown("---")
+
+# Section wirklich löschen
+if st.session_state.delete_section_id:
+    del st.session_state.sections[st.session_state.delete_section_id]
+    st.session_state.delete_section_id = None
+    st.rerun()
 
 # Teilen
-    st.markdown("🔗 Teilen:")
-    share_link = f"https://mein-taskmanager.de/invite/{section_id}"
-    st.code(share_link)
-    st.text("Versende den Link z. B. per WhatsApp oder E-Mail.")
-
-    if section["shared_with"]:
-        st.markdown("👥 Geteilt mit: " + ", ".join(section["shared_with"]))
-                # st.experimental_rerun()
+st.markdown("Teilen")
+share_link = f"https://mein-taskmanager.de/invite/{section_id}"
+st.code(share_link)
+st.text("Versende den Link z.B. per WhatsApp oder E-Mail.")
+if section["shared_with"]:
+    st.markdown("👥 Geteilt mit: " + ", ".join(section["shared_with"]))
