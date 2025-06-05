@@ -104,50 +104,57 @@ if DONE_SECTION_ID in section_ids:
 # UI: Sections und Tasks anzeigen
 for section_id in section_ids:
     section = st.session_state.sections[section_id]
-    
-    if section_id == DONE_SECTION_ID:
-        st.markdown("---")
 
-    expander_label = f"📂 {section['name']}"
-    color = COLOR_PALETTE[section["color"]]
+    if f"task_form_open_{section_id}" not in st.session_state:
+        st.session_state[f"task_form_open_{section_id}"] = False
 
-    with st.expander(expander_label, expanded=False):
-        # Titelzeile mit Lösch-Button
-        col1, col2 = st.columns([12, 1])
+    section_color = COLOR_PALETTE[section["color"]]
+    section_name = section["name"]
+
+    with st.expander(" ", expanded=True):  # Platzhalter, wird überschrieben
+        # Eigener Titel in Farbe & Format
+        col1, col2 = st.columns([0.9, 0.1])
         with col1:
-            st.markdown(f"### <span style='color:{color};'>{section['name']}</span>", unsafe_allow_html=True)
+            st.markdown(
+                f"<div style='font-size:24px; font-weight:700; color:{section_color}; margin-top:-35px; margin-bottom:10px;'>{section_name}</div>",
+                unsafe_allow_html=True)
         with col2:
             if section_id != DONE_SECTION_ID:
                 if st.button("🗑", key=f"delete_section_{section_id}"):
                     st.session_state.delete_section_id = section_id
                     st.rerun()
 
-        # Neue Task anlegen
+        # ➕ Neuer Task Button
         if section_id != DONE_SECTION_ID:
-            input_key = f"task_input_{section_id}"
-            due_key = f"task_due_{section_id}"
-            priority_key = f"task_priority_{section_id}"
+            if st.button("➕ Neuen Task hinzufügen", key=f"show_task_form_btn_{section_id}"):
+                st.session_state[f"task_form_open_{section_id}"] = not st.session_state[f"task_form_open_{section_id}"]
 
-            content = st.text_input("Task-Beschreibung", key=input_key)
-            due_date = st.date_input("Fälligkeitsdatum", value=datetime.now().date(), key=due_key)
-            due_time = st.time_input("Fällige Uhrzeit", value=datetime.now().time(), key=f"time_{section_id}")
-            priority = st.selectbox("Priorität", options=[3, 2, 1], format_func=lambda x: PRIORITY_LABELS[x], key=priority_key)
+        # Task-Formular
+        if st.session_state[f"task_form_open_{section_id}"]:
+            with st.form(key=f"task_form_{section_id}"):
+                content = st.text_input("Task-Beschreibung", key=f"task_input_{section_id}")
+                due_date = st.date_input("Fälligkeitsdatum", value=datetime.now().date(), key=f"task_due_{section_id}")
+                due_time = st.time_input("Fällige Uhrzeit", value=datetime.now().time(), key=f"time_{section_id}")
+                priority = st.selectbox("Priorität", options=[3, 2, 1],
+                                        format_func=lambda x: PRIORITY_LABELS[x], key=f"task_priority_{section_id}")
 
-            if st.button("Speichern", key=f"save_{section_id}"):
-                if content.strip():
-                    task = {
-                       "content": content.strip(),
-                       "due": datetime.combine(due_date, due_time),
-                       "priority": priority,
-                       "assigned_to": [],
-                       "from_section": section_id
-                    }
-                    section["tasks"].append(task)
-                    st.rerun()
-                else:
-                    st.warning("Bitte gib eine Task-Beschreibung ein.")
+                submitted = st.form_submit_button("Speichern")
+                if submitted:
+                    if content.strip():
+                        task = {
+                            "content": content.strip(),
+                            "due": datetime.combine(due_date, due_time),
+                            "priority": priority,
+                            "assigned_to": [],
+                            "from_section": section_id
+                        }
+                        section["tasks"].append(task)
+                        st.session_state[f"task_form_open_{section_id}"] = False
+                        st.rerun()
+                    else:
+                        st.warning("Bitte gib eine Task-Beschreibung ein.")
 
-        # Tasks anzeigen
+        # Aufgaben anzeigen
         tasks_sorted = sorted(section["tasks"], key=lambda x: (x["due"], -x["priority"]))
         for i, task in enumerate(tasks_sorted):
             col1, col2, col3 = st.columns([16, 4, 4])
@@ -169,10 +176,16 @@ for section_id in section_ids:
                         st.rerun()
                 else:
                     color = COLOR_PALETTE.get(task.get("done_color", "Grau"), "#cccccc")
-                    st.markdown(f"<div style='width:20px;height:20px;background-color:{color};border-radius:50%;'></div>", unsafe_allow_html=True)
+                    st.markdown(
+                        f"<div style='width:20px;height:20px;background-color:{color};border-radius:50%;'></div>",
+                        unsafe_allow_html=True
+                    )
                     if st.button("🗑 Löschen", key=f"delete_done_task_{section_id}_{i}"):
                         section["tasks"].pop(i)
                         st.rerun()
+
+
+
 
 
 st.markdown("---")
