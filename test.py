@@ -99,7 +99,15 @@ elif st.session_state.add_section_mode:
                     "shared_with": [],
                     "id": section_id
                 }
-                st.session_state.new_task_inputs[section_id] = {}
+                # Initialize new_task_inputs for the newly created section
+                st.session_state.new_task_inputs[section_id] = {
+                    "content": "",
+                    "assigned_to": "",
+                    "status": "Offen",
+                    "due_date": datetime.now().date(),
+                    "due_time": datetime.now().time(),
+                    "priority": 3
+                }
                 st.session_state.add_section_mode = False
                 st.rerun()
             else:
@@ -166,7 +174,7 @@ for section_id in section_ids:
                 else:
                     st.warning("Bitte gib einen Namen ein.")
         with col_edit2:
-            if st.button("Abbrechen", key=f"cancel_edit_section_{section_id}"):
+            if st.button("✖️ Abbrechen", key=f"cancel_edit_section_{section_id}"):
                 st.session_state.edit_section_id = None
                 st.rerun()
     else:
@@ -179,14 +187,60 @@ for section_id in section_ids:
             assigned_to_key = f"task_assigned_to_{section_id}"
             status_key = f"task_status_{section_id}"
 
-            with st.expander("➕ Neuer Task"):
-                content = st.text_input("Task-Beschreibung", key=input_key)
-                assigned_to = st.text_input("Zugeordnet zu (optional)", key=assigned_to_key)
-                status = st.selectbox("Status", options=["Offen", "In Bearbeitung"], key=status_key)
-                due_date = st.date_input("Fälligkeitsdatum", value=datetime.now().date(), key=due_key)
-                due_time = st.time_input("Fällige Uhrzeit", value=datetime.now().time(), key=time_key)
-                priority = st.selectbox("Priorität", options=[3, 2, 1], format_func=lambda x: PRIORITY_LABELS[x], key=priority_key)
+            # Initialize new_task_inputs for the current section if not already present
+            if section_id not in st.session_state.new_task_inputs:
+                st.session_state.new_task_inputs[section_id] = {
+                    "content": "",
+                    "assigned_to": "",
+                    "status": "Offen",
+                    "due_date": datetime.now().date(),
+                    "due_time": datetime.now().time(),
+                    "priority": 3
+                }
 
+            with st.expander("➕ Neuer Task"):
+                # Use session_state to store and retrieve input values
+                content = st.text_input(
+                    "Task-Beschreibung",
+                    value=st.session_state.new_task_inputs[section_id]["content"],
+                    key=input_key
+                )
+                assigned_to = st.text_input(
+                    "Zugeordnet zu (optional)",
+                    value=st.session_state.new_task_inputs[section_id]["assigned_to"],
+                    key=assigned_to_key
+                )
+                status = st.selectbox(
+                    "Status",
+                    options=["Offen", "In Bearbeitung"],
+                    index=["Offen", "In Bearbeitung"].index(st.session_state.new_task_inputs[section_id]["status"]),
+                    key=status_key
+                )
+                due_date = st.date_input(
+                    "Fälligkeitsdatum",
+                    value=st.session_state.new_task_inputs[section_id]["due_date"],
+                    key=due_key
+                )
+                due_time = st.time_input(
+                    "Fällige Uhrzeit",
+                    value=st.session_state.new_task_inputs[section_id]["due_time"],
+                    key=time_key
+                )
+                priority = st.selectbox(
+                    "Priorität",
+                    options=[3, 2, 1],
+                    format_func=lambda x: PRIORITY_LABELS[x],
+                    index=[3, 2, 1].index(st.session_state.new_task_inputs[section_id]["priority"]),
+                    key=priority_key
+                )
+
+                # Update session_state with current input values on change
+                st.session_state.new_task_inputs[section_id]["content"] = content
+                st.session_state.new_task_inputs[section_id]["assigned_to"] = assigned_to
+                st.session_state.new_task_inputs[section_id]["status"] = status
+                st.session_state.new_task_inputs[section_id]["due_date"] = due_date
+                st.session_state.new_task_inputs[section_id]["due_time"] = due_time
+                st.session_state.new_task_inputs[section_id]["priority"] = priority
 
                 if st.button("Speichern", key=f"save_{section_id}"):
                     if content.strip():
@@ -200,6 +254,15 @@ for section_id in section_ids:
                             "from_section": section_id
                         }
                         section["tasks"].append(task)
+                        # Clear the inputs after saving
+                        st.session_state.new_task_inputs[section_id] = {
+                            "content": "",
+                            "assigned_to": "",
+                            "status": "Offen",
+                            "due_date": datetime.now().date(),
+                            "due_time": datetime.now().time(),
+                            "priority": 3
+                        }
                         st.rerun()
                     else:
                         st.warning("Bitte gib eine Task-Beschreibung ein.")
@@ -234,7 +297,7 @@ for section_id in section_ids:
                     else:
                         st.warning("Bitte gib eine Task-Beschreibung ein.")
             with col_task_edit2:
-                if st.button("Abbrechen", key=f"cancel_edit_task_{task['id']}"):
+                if st.button("✖️ Abbrechen", key=f"cancel_edit_task_{task['id']}"):
                     st.session_state.edit_task_id = None
                     st.rerun()
             st.markdown("---")
@@ -256,9 +319,9 @@ for section_id in section_ids:
                 else:
                     days_left_display = f"({days_left} Tage)"
 
-                st.markdown(f"**{PRIORITY_LABELS[task['priority']]}**  \n{task['content']}  \n{due_str} {days_left_display}  \n  \n**Zugeordnet:** {task.get('assigned_to', 'Nicht zugewiesen')}", unsafe_allow_html=True)
-                
-                
+                st.markdown(f"**{PRIORITY_LABELS[task['priority']]}** \n{task['content']}  \n{due_str} {days_left_display}  \n  \n**Zugeordnet:** {task.get('assigned_to', 'Nicht zugewiesen')}", unsafe_allow_html=True)
+
+
                 # Display "In Bearbeitung" status
                 if section_id != DONE_SECTION_ID:
                     if task.get("status") == "In Bearbeitung":
@@ -305,5 +368,8 @@ for section_id in section_ids:
 # Really delete section
 if st.session_state.delete_section_id:
     del st.session_state.sections[st.session_state.delete_section_id]
+    # Also delete the corresponding new_task_inputs if a section is deleted
+    if st.session_state.delete_section_id in st.session_state.new_task_inputs:
+        del st.session_state.new_task_inputs[st.session_state.delete_section_id]
     st.session_state.delete_section_id = None
     st.rerun()
