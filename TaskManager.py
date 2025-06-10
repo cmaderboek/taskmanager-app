@@ -1,6 +1,10 @@
 import streamlit as st
 from datetime import datetime, timedelta
-import uuid
+from random import randint
+from string import ascii_letters
+
+def create_key():
+    return ascii_letters[randint(0, 25)]+str(randint(0,10000))
 
 # Color options for sections
 COLOR_PALETTE = {
@@ -92,7 +96,7 @@ elif st.session_state.add_section_mode:
     with col1:
         if st.button("✔️ Fertig"):
             if section_name.strip():
-                section_id = str(uuid.uuid4())
+                section_id = create_key()
                 st.session_state.sections[section_id] = {
                     "name": section_name.strip(),
                     "color": section_color,
@@ -236,7 +240,7 @@ for section_id in section_ids_to_display:
             if st.button("Speichern", key=f"save_{section_id}"):
                 if content.strip():
                     task = {
-                        "id": str(uuid.uuid4()), # Assign a unique ID to each task
+                        "id": create_key(), # Assign a unique ID to each task
                         "content": content.strip(),
                         "due": datetime.combine(due_date, due_time),
                         "priority": priority,
