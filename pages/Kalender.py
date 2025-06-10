@@ -1,5 +1,5 @@
 import streamlit as st
-from datetime import datetime
+from datetime import datetime, timedelta
 from streamlit_calendar import calendar
 
 # Color options (needs to be consistent across files)
@@ -16,7 +16,7 @@ COLOR_PALETTE = {
 
 st.set_page_config(page_title="TaskBuddy Kalender", layout="wide")
 
-st.title("📅 Dein TaskBuddy Kalender")
+st.title("Kalender")
 
 # Retrieve sections and tasks from session_state
 if "sections" not in st.session_state:
@@ -73,11 +73,13 @@ for section_id, section_data in st.session_state.sections.items():
                 event_class_name = "event-inprogress"
                 event_color = COLOR_PALETTE["Gelb"] # Special color for in-progress on calendar
 
+        end_datetime = due_datetime + timedelta(hours=1)
+
         calendar_events.append(
             {
                 "title": event_title,
                 "start": due_datetime.isoformat(), # FullCalendar expects ISO 8601 string
-                "end": (due_datetime + datetime.timedelta(hours=1)).isoformat(), # Assume 1 hour duration for visualization
+                "end": end_datetime.isoformat(), # Assume 1 hour duration for visualization
                 "extendedProps": {
                     "section_name": section_data["name"],
                     "status": task.get("status", "Offen"),
