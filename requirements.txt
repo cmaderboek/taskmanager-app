@@ -1,5 +1,5 @@
-streamlit==1.45.1
-uuid==1.30
+streamlit
+uuid
 json
 os
 datetime
