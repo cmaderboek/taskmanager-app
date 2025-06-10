@@ -77,7 +77,7 @@ for section_id, section_data in st.session_state.sections.items():
             {
                 "title": event_title,
                 "start": due_datetime.isoformat(), # FullCalendar expects ISO 8601 string
-                "end": (due_datetime + timedelta(hours=1)).isoformat(), # Assume 1 hour duration for visualization
+                "end": (due_datetime + datetime.timedelta(hours=1)).isoformat(), # Assume 1 hour duration for visualization
                 "extendedProps": {
                     "section_name": section_data["name"],
                     "status": task.get("status", "Offen"),
