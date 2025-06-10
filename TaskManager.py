@@ -351,3 +351,5 @@ if st.session_state.delete_section_id:
         del st.session_state.new_task_inputs[st.session_state.delete_section_id]
     st.session_state.delete_section_id = None
     st.rerun()
+
+
