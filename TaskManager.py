@@ -357,3 +357,21 @@ if st.session_state.delete_section_id:
     st.rerun()
 
 
+
+
+
+# --- Shareable Link Container ---
+st.markdown("<div style='height: 200px;'></div>", unsafe_allow_html=True) # Add some space
+st.markdown(
+    """
+    <div style='background-color:#bbbbbb; padding: 20px; border-radius: 15px; text-align: center; color: white; padding-bottom: 30px;'>
+        <h3>Teile TaskBuddy mit deinen Freunden!</h3>
+        <p>Verwende diesen Link, um die App zu teilen:</p>
+        <a href='https://taskmanager-app-mci.streamlit.app/' target='_blank' style='color: white; text-decoration: underline; font-weight: bold;'>
+        taskmanager-app-mci.streamlit.app
+        </a>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+# --- End Shareable Link Container ---
