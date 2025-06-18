@@ -18,10 +18,10 @@ Aktuell befinden wir uns am Ende der letzten Sprints in der Feinjustierung der A
 
 c) Wie hat sich die Komplexität in unserem Projekt entwickelt?
 
-Die Komplexität des Projekts ist kontinuierlich und kontrolliert gewachsen. Da wir von Beginn an unseren eigenen Code geschrieben und iterativ weiterentwickelt haben, blieb die technische Architektur stets überschaubar. Dies ermöglichte es uns, auch in späteren Sprints jederzeit Anpassungen vorzunehmen, ohne den Überblick zu verlieren – ein großer Vorteil für die langfristige Wartbarkeit und Erweiterbarkeit der App.
+Die Komplexität des Projekts ist kontinuierlich und kontrolliert gewachsen - ein wenig stärker angestiegen zu Beginn als im weiteren Verlauf. Da wir von Beginn an unseren eigenen Code geschrieben und iterativ weiterentwickelt haben, blieb die technische Architektur stets überschaubar. Dies ermöglichte es uns, auch in späteren Sprints jederzeit Anpassungen vorzunehmen, ohne den Überblick zu verlieren – ein großer Vorteil für die langfristige Wartbarkeit und Erweiterbarkeit der App.
 
 
 
 d) Wie gehen wir damit um?
 
-Dank der klaren Priorisierung durch den Product Owner sowie unterstützender Tools (wie KI-gestützte Lösungen) konnten wir Herausforderungen bei wachsender Komplexität gezielt adressieren. Der Scrum Master stellte sicher, dass das Team regelmäßig Impediments kommunizierte und beseitigte, sodass wir stets effizient arbeiten konnten. So wurde die steigende Komplexität nicht zum Risiko, sondern zum gestaltbaren Teil des Entwicklungsprozesses.
+Dank der klaren Priorisierung durch den Product Owner sowie unterstützender Tools (wie KI-gestützte Lösungen) konnten wir Herausforderungen bei wachsender Komplexität gezielt adressieren. Der Scrum Master stellte sicher, dass das Team regelmäßig Hindernisse kommunizierte und beseitigte, sodass wir stets effizient arbeiten konnten. So wurde die steigende Komplexität nicht zum Risiko, sondern zum gestaltbaren Teil des Entwicklungsprozesses.
