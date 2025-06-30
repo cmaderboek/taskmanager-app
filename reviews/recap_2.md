@@ -1,27 +1,17 @@
-Project Review 2
+# Project Recap 2
 
 
-a) Was ist in den vergangenen Sprints gut gelaufen?
-
-Die Zusammenarbeit im Scrum-Team hat sich als besonders effektiv erwiesen. Die Kommunikation zwischen Product Owner und Developern verlief reibungslos. Anforderungen wurden klar definiert, abgestimmt und zügig in umsetzbare Tasks überführt. Auch der Scrum Master unterstützte das Team gezielt dabei, Hindernisse frühzeitig zu identifizieren und aus dem Weg zu räumen.
-
-Obwohl es zu Beginn technische Herausforderungen im Umgang mit GitHub und Streamlit gab, konnten diese im Laufe der Sprints durch gemeinsame Lösungsfindung schnell überwunden werden. So entstand eine Task-Manager-App, die alle vom Product Owner formulierten Anforderungen erfüllt.
-
-Die klare Scrum-Aufteilung war vor allem zu Beginn eine wertvolle Orientierungshilfe. Mit zunehmendem Fortschritt der Sprints haben sich die Zuständigkeiten jedoch bewusst vermischt, da Product Owner und Scrum Master nicht gleich stark ausgelastet waren, wie Developer. Dies stärkte zwar die Teamdynamik und förderte den kreativen Austausch, sprach aber gegen die Scrum-Prinzipien. 
+**a) Was ist in den vergangenen Sprints gut gelaufen?**
+Die Zusammenarbeit im Scrum-Team hat sich als effektiv erwiesen. Die Kommunikation zwischen Product Owner und Developern verlief in den meisten Fällen reibungslos. Anforderungen wurden klar definiert, abgestimmt und zügig in umsetzbare Tasks überführt. Auch der Scrum Master unterstützte das Team gezielt dabei, Hindernisse frühzeitig zu identifizieren und aus dem Weg zu räumen. Obwohl es zu Beginn technische Herausforderungen im Umgang mit GitHub und Streamlit gab (z.B. Repository weiterleiten), konnten diese im Laufe der Sprints durch gemeinsame Lösungsfindung schnell überwunden werden. So entstand eine Task-Manager-App, die bereits die meisten vom Product Owner formulierten Anforderungen erfüllt. Die klare Scrum-Aufteilung war vor allem zu Beginn eine wertvolle Orientierungshilfe. Mit zunehmendem Fortschritt der Sprints haben sich die Zuständigkeiten jedoch bewusst vermischt, da Product Owner und Scrum Master nicht gleich stark ausgelastet waren, wie Developer. Dies stärkte zwar die Teamdynamik, förderte den kreativen Austausch und die Absprache neuer Entwicklungen, sprach aber eigentlich gegen die Scrum-Prinzipien. 
 
 
-b) Wo stehen wir gerade & was kommt als nächstes?
-
-Aktuell befinden wir uns am Ende der letzten Sprints in der Feinjustierung der App. Neben funktionalen Aspekten wird der Fokus auf das UI/UX-Design sowie zusätzliche Features (z. B. eine Kalenderansicht) gelegt. In den kommenden Sprints werden diese Erweiterungen umgesetzt und abschließend durch den Product Owner abgenommen. Zudem sind weitere Reviews und Retrospektiven geplant, um den Entwicklungsprozess abschließend zu reflektieren.
-
+**b) Wo stehen wir gerade & was kommt als nächstes?**
+Aktuell befinden wir uns am Ende der letzten Sprints in der Feinjustierung der App. Neben funktionalen Aspekten wird der Fokus auf das UI/UX-Design sowie zusätzliche Features (z.B. eine neue, seperate Seite für die erledigten Tasks) gelegt. Inzwischen ist es möglich, Sections zu bearbeiten und auch zu löschen aber auch einzelne Tasks im Nachhinein zu bearbeiten oder zu löschen, was einem weiteren großen Meilenstein entspricht. Inzwischen werden auch die erledigten Tasks auf einer seperaten Seite, die durch das Menü angesteuert werden kann, angezeigt - Tasks, die erledigt sind und bereits länger als 30 Tage fällig sind, werden automatisch gelöscht, um die Übersicht zu behalten. In den kommenden Sprints werden nur mehr kleine Erweiterungen (bzgl. Technik und Oberfläche) umgesetzt, Bugs gefixed und abschließend durch den Product Owner abgenommen. Zudem ist ein abschließendes Review/Retrospektive geplant, um den Entwicklungsprozess abschließend zu reflektieren.
 
 
-c) Wie hat sich die Komplexität in unserem Projekt entwickelt?
-
-Die Komplexität des Projekts ist kontinuierlich und kontrolliert gewachsen - ein wenig stärker angestiegen zu Beginn als im weiteren Verlauf. Da wir von Beginn an unseren eigenen Code geschrieben und iterativ weiterentwickelt haben, blieb die technische Architektur stets überschaubar. Dies ermöglichte es uns, auch in späteren Sprints jederzeit Anpassungen vorzunehmen, ohne den Überblick zu verlieren – ein großer Vorteil für die langfristige Wartbarkeit und Erweiterbarkeit der App.
-
+**c) Wie hat sich die Komplexität in unserem Projekt entwickelt?**
+Die Komplexität des Projekts ist kontinuierlich und kontrolliert gewachsen - ein wenig stärker angestiegen zu Beginn als im weiteren Verlauf. Da vor allem im ersten Schritt bzw. im ersten Sprint die zentralsten Funktionen umgesetzt wurden (z.B. Section und Tasks anlegen können), ist der Task-Manager zu Beginn stark bzgl. des Umfangs bzw. der Komplexität gestiegen. In den darauf folgenden Sprints wurden vor allem immer mehr Feinheiten justiert, Bugs ausgebessert und kleine, neue Funktionen hinzugefügt - das waren aber im Vergleich zum ersten Sprint verhältnismäßig wenig Code-Zeilen. Nichtsdestotrotz: Da wir von Beginn an unseren eigenen Code geschrieben und iterativ weiterentwickelt haben, blieb die technische Architektur stets überschaubar. Dies ermöglichte es uns, auch in späteren Sprints jederzeit Anpassungen vorzunehmen, ohne den Überblick zu verlieren – ein großer Vorteil für die langfristige Wartbarkeit und Erweiterbarkeit der App.
 
 
-d) Wie gehen wir damit um?
-
-Dank der klaren Priorisierung durch den Product Owner sowie unterstützender Tools (wie KI-gestützte Lösungen) konnten wir Herausforderungen bei wachsender Komplexität gezielt adressieren. Der Scrum Master stellte sicher, dass das Team regelmäßig Hindernisse kommunizierte und beseitigte, sodass wir stets effizient arbeiten konnten. So wurde die steigende Komplexität nicht zum Risiko, sondern zum gestaltbaren Teil des Entwicklungsprozesses.
+**d) Wie gehen wir damit um?**
+Dank der klaren Priorisierung durch den Product Owner sowie unterstützender Tools (wie KI-gestützte Lösungen) konnten wir Herausforderungen bei wachsender Komplexität gezielt adressieren. Der Scrum Master stellte sicher, dass das Team regelmäßig Hindernisse kommunizierte und beseitigte, sodass wir stets effizient arbeiten konnten. So wurde die steigende Komplexität nicht zum Risiko, sondern zum gestaltbaren Teil des Entwicklungsprozesses. Darüber hinaus förderte die enge Zusammenarbeit im Team ein gemeinsames Verständnis für die Projektziele und erleichterte schnelle Entscheidungen. Regelmäßige Retrospektiven ermöglichten es uns, unsere Arbeitsweise kontinuierlich zu reflektieren und gezielt zu verbessern. Durch diese transparente und anpassungsfähige Herangehensweise konnten wir nicht nur Herausforderungen meistern, sondern auch eine nachhaltige Teamdynamik aufbauen.
