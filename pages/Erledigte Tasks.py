@@ -1,5 +1,5 @@
 import streamlit as st
-from datetime import datetime, timedelta
+from datetime import datetime
 
 # Color options for sections (re-import or make global if many pages use them)
 COLOR_PALETTE = {

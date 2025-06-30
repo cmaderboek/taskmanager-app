@@ -357,9 +357,6 @@ if st.session_state.delete_section_id:
     st.rerun()
 
 
-
-
-
 # --- Shareable Link Container ---
 st.markdown("<div style='height: 200px;'></div>", unsafe_allow_html=True) # Add some space
 st.markdown(
